@@ -6,7 +6,7 @@
 #    By: ddias-fe <ddias-fe@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/23 21:05:41 by ddias-fe          #+#    #+#              #
-#    Updated: 2024/01/23 21:05:41 by ddias-fe         ###   ########.fr        #
+#    Updated: 2024/09/30 17:28:19 by ddias-fe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,8 +15,8 @@
 #|___________________________[VARIABLES]_________________________|
 #|_______________________________________________________________|
 
-NAME = push_swap
-LIBFT = ../libs/libft/libft.a
+NAME = philo
+LIBFT = libs/libft/libft.a
 SRC_DIR = ./src
 OBJ_DIR = ./obj
 
@@ -31,6 +31,8 @@ RMDIR = rmdir
 #|_______________________________________________________________|
 
 SRC =	$(SRC_DIR)/main.c \
+		$(SRC_DIR)/inits/init_data.c \
+		$(SRC_DIR)/parser/args_parser.c
 
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
@@ -45,10 +47,9 @@ deps:
 	$(MAKE) -C ./libs/libft
 
 #	CREATE OBJECTS FOLDER
-	@mkdir -p $(OBJ_DIR)/algorithm \
-		$(OBJ_DIR)/operations \
-		$(OBJ_DIR)/parser \
-		$(OBJ_DIR)/utils
+	@mkdir -p $(OBJ_DIR)
+	@mkdir -p $(OBJ_DIR)/inits
+	@mkdir -p $(OBJ_DIR)/parser
 	@echo "Created object directories."
 
 $(NAME): $(OBJ) $(DEPS)
@@ -63,11 +64,7 @@ clean:
 
 fclean: clean
 	@$(RM) $(LIBFT) $(NAME)
-	@$(RMDIR) $(OBJ_DIR)/algorithm \
-			$(OBJ_DIR)/operations \
-			$(OBJ_DIR)/parser \
-			$(OBJ_DIR)/utils \
-			$(OBJ_DIR)
+	@$(RMDIR) $(OBJ_DIR)
 
 gdb:
 	gdb -tui ./push_swap
