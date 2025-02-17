@@ -1,22 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ddias-fe <ddias-fe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/30 14:55:43 by ddias-fe          #+#    #+#             */
-/*   Updated: 2024/09/30 17:27:31 by ddias-fe         ###   ########.fr       */
+/*   Created: 2025/02/17 12:43:06 by ddias-fe          #+#    #+#             */
+/*   Updated: 2025/02/17 12:43:06 by ddias-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	main(int ac, char **av)
+long current_time_ms(void)
 {
-	if(parser(ac, av))
-		return (-1);
-	if (!init_program(ac, av))
-		return (-1);
-	return (0);
+	struct timeval time;
+
+	gettimeofday(&time, NULL);
+	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }

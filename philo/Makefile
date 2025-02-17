@@ -32,7 +32,7 @@ RMDIR = rmdir
 
 SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/inits/init_data.c \
-		$(SRC_DIR)/parser/args_parser.c
+		$(SRC_DIR)/parser/parser.c \
 
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
@@ -67,6 +67,6 @@ fclean: clean
 	@$(RMDIR) $(OBJ_DIR)
 
 gdb:
-	gdb -tui ./push_swap
+	gdb -tui ./philo
 
 re: fclean all

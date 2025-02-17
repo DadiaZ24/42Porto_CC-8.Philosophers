@@ -11,57 +11,68 @@
 /* ************************************************************************** */
 
 #ifndef PHILO_H
-# define PHILO_H
+#define PHILO_H
 
 //________________________________________________________________
 //|_____________________________[LIBS]____________________________|
 //|_______________________________________________________________|
 
-# include "../libs/libft/libft.h"
-# include <pthread.h>
+#include "../libs/libft/libft.h"
+#include <pthread.h>
 
 //________________________________________________________________
 //|____________________________[MACROS]___________________________|
 //|_______________________________________________________________|
 
 //----COLORS
-# define BLACK "\033[0;30m"
-# define RED "\033[0;31m"
-# define BLUE "\033[0;36m"
-# define DEFAULT_COLOR "\033[0m"
+#define BLACK "\033[0;30m"
+#define RED "\033[0;31m"
+#define BLUE "\033[0;36m"
+#define DEFAULT_COLOR "\033[0m"
 
 //-----MESSAGES
-
 
 //________________________________________________________________
 //|__________________________[STRUCTURES]_________________________|
 //|_______________________________________________________________|
 
+typedef struct s_stats t_stats;
+
 typedef struct s_philo
 {
-	int				philo_id;
-	pthread_mutex_t *left_fork;
-	pthread_mutex_t	*right_fork;
-	suseconds_t		meal_time;
-	suseconds_t		sleep_time;
-	suseconds_t		think_time;
-}	t_philo;
+	int 			philo_id;
+	int 			meals;
+	long 			last_meal;
+	pthread_t		id;
+	int 			left_fork;
+	int 			right_fork;
+	t_stats 		*stats;
+
+} t_philo;
 
 typedef struct s_stats
 {
-	int				philos_nbr;
-	suseconds_t		time_to_eat;
-	suseconds_t		time_to_sleep;
-	suseconds_t		time_to_die;
-	pthread_mutex_t	*left_fork;
-	pthread_mutex_t	*right_fork;
-}	t_stats;
+	int philo_total;
+	long time_to_die;
+	long time_to_eat;
+	long time_to_sleep;
+	int meals_required;
+	bool stop;
+	pthread_mutex_t *forks;
+	pthread_mutex_t print;
+	long start_time;
+	t_philo *philos;
+
+} t_stats;
 
 //________________________________________________________________
 //|__________________________[FUNCTIONS]__________________________|
 //|_______________________________________________________________|
 
-bool	parse_args(char **av);
-
+int parser(int ac, char **av);
+int	init_forks(t_stats *stats);
+int	init_stats(int ac, char **av, t_stats *stats);
+void	init_philos(t_stats *stats, t_philo *philos);
+int	init_program(int ac, char **av);
 
 #endif
