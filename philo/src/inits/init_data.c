@@ -12,11 +12,8 @@
 
 #include "philo.h"
 
-int	init_program(int ac, char **av)
+int	init_program(int ac, char **av, t_stats *stats, t_philo *philos)
 {
-	t_stats	*stats;
-	t_philo	*philos;
-
 	stats = malloc(sizeof(t_stats));
 	if (!stats)
 		return (printf("ERROR!!!!"), 0);
@@ -66,7 +63,7 @@ int	init_stats(int ac, char **av, t_stats *stats)
 	}
 	stats->start_time = current_time_ms();
 	stats->stop = false;
-	if (!pthread_mutex_init(&stats->print, NULL))
+	if (pthread_mutex_init(&stats->print, NULL))
 		return (0);
 	if(!init_forks(stats))
 		return (0);

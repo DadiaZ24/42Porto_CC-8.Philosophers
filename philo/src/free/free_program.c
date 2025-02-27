@@ -1,20 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isdigit.c                                       :+:      :+:    :+:   */
+/*   free_program.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ddias-fe <ddias-fe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/09 14:54:09 by ddias-fe          #+#    #+#             */
-/*   Updated: 2024/09/30 17:29:24 by ddias-fe         ###   ########.fr       */
+/*   Created: 2025/02/17 14:16:17 by ddias-fe          #+#    #+#             */
+/*   Updated: 2025/02/17 14:16:17 by ddias-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "philo.h"
 
-int	ft_isdigit(int c)
+int	free_program(t_stats *stats, t_philo *philos)
 {
-	if (c >= '0' && c <= '9')
-		return (1);
-	return (0);
+	int i;
+
+	i = 0;
+	while (i < stats->philo_total)
+	{
+		pthread_mutex_destroy(&stats->forks[i]);
+		i++;
+	}
+	pthread_mutex_destroy(&stats->print);
+	free(stats->forks);
+	free(stats->philos);
+	free(stats);
+	free(philos);
+	return (1);
 }

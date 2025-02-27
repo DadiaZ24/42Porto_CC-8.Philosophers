@@ -14,9 +14,17 @@
 
 int	main(int ac, char **av)
 {
+	t_philo *philos;
+	t_stats stats;
+
+	philos = NULL;
 	if(parser(ac, av))
 		return (-1);
-	if (!init_program(ac, av))
+	if (!init_program(ac, av, &stats, philos))
 		return (-1);
+	if (!exec(&stats, philos))
+		return (printf("ERROR!!!!"), free_program(&stats, philos), 0);
+	if (!free_program(&stats, philos))
+		return (printf("ERROR!!!!"), 0);
 	return (0);
 }
