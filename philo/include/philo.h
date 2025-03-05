@@ -17,8 +17,16 @@
 //|_____________________________[LIBS]____________________________|
 //|_______________________________________________________________|
 
-#include "../libs/libft/libft.h"
 #include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/time.h>
+#include <stdbool.h>
+#include <semaphore.h>
+#include <fcntl.h>
+#include <signal.h>
+#include <sys/wait.h>
 
 //________________________________________________________________
 //|____________________________[MACROS]___________________________|
@@ -40,13 +48,13 @@ typedef struct s_stats t_stats;
 
 typedef struct s_philo
 {
-	int 			philo_id;
-	int 			meals;
-	long 			last_meal;
-	pthread_t		id;
-	int 			left_fork;
-	int 			right_fork;
-	t_stats 		*stats;
+	int philo_id;
+	int meals;
+	long last_meal;
+	pthread_t id;
+	int left_fork;
+	int right_fork;
+	t_stats *stats;
 
 } t_philo;
 
@@ -70,15 +78,15 @@ typedef struct s_stats
 //|_______________________________________________________________|
 
 int parser(int ac, char **av);
-int	init_forks(t_stats *stats);
-int	init_stats(int ac, char **av, t_stats *stats);
-void	init_philos(t_stats *stats, t_philo *philos);
-int	init_program(int ac, char **av, t_stats *stats, t_philo *philos);
-void	action(t_stats *stats, t_philo *philo, char *msg);
-int	exec(t_stats *stats, t_philo *philo);
-void	*philo_routine(t_philo *philo);
-void	routine(t_philo *philo, t_stats *stats);
-long current_time_ms(void);
+int init_forks(t_stats *stats);
+int init_stats(int ac, char **av, t_stats *stats);
+void init_philos(t_stats *stats, t_philo *philos);
+int init_program(int ac, char **av, t_stats *stats, t_philo *philos);
+void action(t_stats *stats, t_philo *philo, char *msg);
+int exec(t_stats *stats, t_philo *philo);
+void *philo_routine(t_philo *philo);
+void routine(t_philo *philo, t_stats *stats);
+suseconds_t current_time_ms(void);
 int free_program(t_stats *stats, t_philo *philos);
-
+int ft_atoi(const char *str);
 #endif
