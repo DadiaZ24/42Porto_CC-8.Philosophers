@@ -14,9 +14,12 @@
 
 void action(t_stats *stats, t_philo *philo, char *msg)
 {
-	if (stats->stop)
-		return;
 	pthread_mutex_lock(&stats->action);
+	if (stats->stop)
+	{
+		pthread_mutex_unlock(&stats->action);
+		return;
+	}
 	printf("[%ld] Philo %d %s\n", current_time_ms() - stats->start_time, philo->philo_id, msg);
 	pthread_mutex_unlock(&stats->action);
 }
@@ -25,8 +28,13 @@ void routine(t_philo *philo, t_stats *stats)
 {
 	while (1)
 	{
+		pthread_mutex_lock(&stats->action);
 		if (stats->stop)
+		{
+			pthread_mutex_unlock(&stats->action);
 			break;
+		}
+		pthread_mutex_unlock(&stats->action);
 		if (stats->philo_total <= 1)
 		{
 			action(stats, philo, "has died");
@@ -49,7 +57,11 @@ void routine(t_philo *philo, t_stats *stats)
 		if ((current_time_ms() - philo->last_meal) > stats->time_to_die)
 		{
 			action(stats, philo, "has died");
+			pthread_mutex_lock(&stats->action);
 			stats->stop = true;
+			pthread_mutex_unlock(&stats->action);
+			pthread_mutex_unlock(&stats->forks[philo->left_fork]);
+			pthread_mutex_unlock(&stats->forks[philo->right_fork]);
 			break;
 		}
 		action(stats, philo, "is eating");

@@ -22,7 +22,7 @@ int free_program(t_stats *stats)
 		pthread_mutex_destroy(&stats->forks[i]);
 		i++;
 	}
-	pthread_mutex_destroy(&stats->action);
+	// pthread_mutex_destroy(&stats->action);
 	if (stats->forks)
 		free(stats->forks);
 	if (stats->philos)

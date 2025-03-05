@@ -28,14 +28,13 @@ void init_philos(t_stats *stats, t_philo *philos)
 	int i;
 
 	i = -1;
-	while (i < stats->philo_total)
+	while (++i < stats->philo_total)
 	{
 		philos[i].philo_id = i + 1;
 		philos[i].meals = 0;
 		philos[i].last_meal = 0;
 		philos[i].left_fork = i;
 		philos[i].right_fork = (i + 1) % stats->philo_total;
-		i++;
 	}
 	stats->philos = philos;
 }

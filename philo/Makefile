@@ -22,6 +22,7 @@ OBJ_DIR = ./obj
 #COMPILE/RULE TOOLS
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g -I./include
+SANITIZE = -fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer
 RM = rm -f
 RMDIR = rmdir
 
@@ -73,6 +74,9 @@ gdb:
 	gdb -tui ./philo
 
 valgrind:
-	@valgrind --leak-check=full --tool=helgrind -s --show-leak-kinds=all ./$(NAME)
+	@valgrind --leak-check=full -s --show-leak-kinds=all ./$(NAME)
+
+helgrind:
+	@valgrind --tool=helgrind ./$(NAME)
 
 re: fclean all
