@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-int	free_program(t_stats *stats, t_philo *philos)
+int free_program(t_stats *stats, t_philo *philos)
 {
 	int i;
 
@@ -24,8 +24,6 @@ int	free_program(t_stats *stats, t_philo *philos)
 	}
 	pthread_mutex_destroy(&stats->print);
 	free(stats->forks);
-	free(stats->philos);
-	free(stats);
 	free(philos);
 	return (1);
 }

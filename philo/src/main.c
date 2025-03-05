@@ -12,15 +12,15 @@
 
 #include "philo.h"
 
-int	main(int ac, char **av)
+int main(int ac, char **av)
 {
 	t_philo *philos;
 	t_stats stats;
 
 	philos = NULL;
-	if(parser(ac, av))
+	if (parser(ac, av))
 		return (-1);
-	if (!init_program(ac, av, &stats, philos))
+	if (!init_program(ac, av, &stats, &philos))
 		return (-1);
 	if (!exec(&stats, philos))
 		return (printf("ERROR!!!!"), free_program(&stats, philos), 0);

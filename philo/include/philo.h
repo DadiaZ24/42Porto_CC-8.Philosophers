@@ -69,7 +69,7 @@ typedef struct s_stats
 	pthread_mutex_t *forks;
 	pthread_mutex_t print;
 	long start_time;
-	t_philo *philos;
+	t_philo **philos;
 
 } t_stats;
 
@@ -80,8 +80,8 @@ typedef struct s_stats
 int parser(int ac, char **av);
 int init_forks(t_stats *stats);
 int init_stats(int ac, char **av, t_stats *stats);
-void init_philos(t_stats *stats, t_philo *philos);
-int init_program(int ac, char **av, t_stats *stats, t_philo *philos);
+void init_philos(t_stats *stats, t_philo **philos);
+int init_program(int ac, char **av, t_stats *stats, t_philo **philos);
 void action(t_stats *stats, t_philo *philo, char *msg);
 int exec(t_stats *stats, t_philo *philo);
 void *philo_routine(t_philo *philo);

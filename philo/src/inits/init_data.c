@@ -12,38 +12,35 @@
 
 #include "philo.h"
 
-int	init_program(int ac, char **av, t_stats *stats, t_philo *philos)
+int init_program(int ac, char **av, t_stats *stats, t_philo **philos)
 {
-	stats = malloc(sizeof(t_stats));
-	if (!stats)
+	if (!init_stats(ac, av, stats))
 		return (printf("ERROR!!!!"), 0);
-	if(!init_stats(ac, av, stats))
-		return (printf("ERROR!!!!"), 0);
-	philos = malloc(sizeof(t_philo) * stats->philo_total);
-	if (!philos)
+	*philos = malloc(sizeof(t_philo) * stats->philo_total);
+	if (!*philos)
 		return (printf("ERROR!!!!"), 0);
 	init_philos(stats, philos);
 	return (1);
 }
 
-void	init_philos(t_stats *stats, t_philo *philos)
+void init_philos(t_stats *stats, t_philo **philos)
 {
 	int i;
 
 	i = -1;
 	while (i < stats->philo_total)
 	{
-		philos[i].philo_id = i + 1;
-		philos[i].meals = 0;
-		philos[i].last_meal = 0;
-		philos[i].left_fork = i;
-		philos[i].right_fork = (i + 1) % stats->philo_total;
+		philos[i]->philo_id = i + 1;
+		philos[i]->meals = 0;
+		philos[i]->last_meal = 0;
+		philos[i]->left_fork = i;
+		philos[i]->right_fork = (i + 1) % stats->philo_total;
 		i++;
 	}
 	stats->philos = philos;
 }
 
-int	init_stats(int ac, char **av, t_stats *stats)
+int init_stats(int ac, char **av, t_stats *stats)
 {
 	if (ac == 5)
 	{
@@ -65,12 +62,12 @@ int	init_stats(int ac, char **av, t_stats *stats)
 	stats->stop = false;
 	if (pthread_mutex_init(&stats->print, NULL))
 		return (0);
-	if(!init_forks(stats))
+	if (!init_forks(stats))
 		return (0);
 	return (1);
 }
 
-int	init_forks(t_stats *stats)
+int init_forks(t_stats *stats)
 {
 	int i;
 
