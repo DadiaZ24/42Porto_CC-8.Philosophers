@@ -19,22 +19,22 @@ int init_program(int ac, char **av, t_stats *stats, t_philo **philos)
 	*philos = malloc(sizeof(t_philo) * stats->philo_total);
 	if (!*philos)
 		return (printf("ERROR!!!!"), 0);
-	init_philos(stats, philos);
+	init_philos(stats, *philos);
 	return (1);
 }
 
-void init_philos(t_stats *stats, t_philo **philos)
+void init_philos(t_stats *stats, t_philo *philos)
 {
 	int i;
 
 	i = -1;
 	while (i < stats->philo_total)
 	{
-		philos[i]->philo_id = i + 1;
-		philos[i]->meals = 0;
-		philos[i]->last_meal = 0;
-		philos[i]->left_fork = i;
-		philos[i]->right_fork = (i + 1) % stats->philo_total;
+		philos[i].philo_id = i + 1;
+		philos[i].meals = 0;
+		philos[i].last_meal = 0;
+		philos[i].left_fork = i;
+		philos[i].right_fork = (i + 1) % stats->philo_total;
 		i++;
 	}
 	stats->philos = philos;
@@ -60,7 +60,7 @@ int init_stats(int ac, char **av, t_stats *stats)
 	}
 	stats->start_time = current_time_ms();
 	stats->stop = false;
-	if (pthread_mutex_init(&stats->print, NULL))
+	if (pthread_mutex_init(&stats->action, NULL))
 		return (0);
 	if (!init_forks(stats))
 		return (0);

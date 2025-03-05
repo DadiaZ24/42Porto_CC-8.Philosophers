@@ -12,73 +12,68 @@
 
 #include "philo.h"
 
-void	action(t_stats *stats, t_philo *philo, char *msg)
+void action(t_stats *stats, t_philo *philo, char *msg)
 {
 	if (stats->stop)
-		return ;
-	pthread_mutex_lock(&stats->print);
-	printf("%ld %d %s\n", current_time_ms() - stats->start_time, philo->philo_id, msg);
-	pthread_mutex_unlock(&stats->print);
+		return;
+	pthread_mutex_lock(&stats->action);
+	printf("[%ld] Philo %d %s\n", current_time_ms() - stats->start_time, philo->philo_id, msg);
+	pthread_mutex_unlock(&stats->action);
 }
 
-void	routine(t_philo *philo, t_stats *stats)
+void routine(t_philo *philo, t_stats *stats)
 {
-    while (1)
-    {
-		pthread_mutex_lock(&stats->print);
+	while (1)
+	{
 		if (stats->stop)
+			break;
+		if (stats->philo_total <= 1)
 		{
-			pthread_mutex_unlock(&stats->print);
-			break ;
+			action(stats, philo, "has died");
+			break;
 		}
-		pthread_mutex_unlock(&stats->print);
-		action(stats, philo, "is thinking");
 		if (philo->philo_id % 2 == 0)
 		{
+			pthread_mutex_lock(&stats->forks[philo->right_fork]);
 			pthread_mutex_lock(&stats->forks[philo->left_fork]);
 			action(stats, philo, "has taken a fork");
-			pthread_mutex_lock(&stats->forks[philo->right_fork]);
+			action(stats, philo, "has taken a fork");
 		}
 		else
 		{
+			pthread_mutex_lock(&stats->forks[philo->left_fork]);
 			pthread_mutex_lock(&stats->forks[philo->right_fork]);
 			action(stats, philo, "has taken a fork");
-			pthread_mutex_lock(&stats->forks[philo->left_fork]);
+			action(stats, philo, "has taken a fork");
 		}
-		action(stats, philo, "has taken a fork");
-		pthread_mutex_lock(&stats->print);
-		philo->last_meal = current_time_ms();
-		pthread_mutex_unlock(&stats->print);
+		if ((current_time_ms() - philo->last_meal) > stats->time_to_die)
+		{
+			action(stats, philo, "has died");
+			stats->stop = true;
+			break;
+		}
 		action(stats, philo, "is eating");
 		usleep(stats->time_to_eat * 1000);
-		pthread_mutex_lock(&stats->print);
-		philo->meals++;
-		pthread_mutex_unlock(&stats->print);
 		pthread_mutex_unlock(&stats->forks[philo->left_fork]);
 		pthread_mutex_unlock(&stats->forks[philo->right_fork]);
+		if (stats->meals_required >= 0)
+			philo->meals++;
+		philo->last_meal = current_time_ms();
 		action(stats, philo, "is sleeping");
 		usleep(stats->time_to_sleep * 1000);
-		pthread_mutex_lock(&stats->print);
-		if (stats->meals_required != -1 && philo->meals == stats->meals_required)
-			stats->stop = true;
-		pthread_mutex_unlock(&stats->print);
+		action(stats, philo, "is thinking");
+		if (stats->meals_required != -1 && philo->meals >= stats->meals_required)
+			break;
 	}
 }
 
-void	*philo_routine(t_philo *philo)
+void *philo_routine(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->stats->print);
-	if (philo->stats->stop)
-	{
-		pthread_mutex_unlock(&philo->stats->print);
-		return (NULL);
-	}
-	pthread_mutex_unlock(&philo->stats->print);
 	routine(philo, philo->stats);
-	return (NULL);	
+	return (NULL);
 }
 
-int	exec(t_stats *stats, t_philo *philo)
+int exec(t_stats *stats, t_philo *philo)
 {
 	int i;
 
@@ -86,7 +81,7 @@ int	exec(t_stats *stats, t_philo *philo)
 	stats->start_time = current_time_ms();
 	while (++i < stats->philo_total)
 	{
-		philo[i].last_meal = current_time_ms();
+		philo[i].last_meal = stats->start_time;
 		philo[i].stats = stats;
 		if (pthread_create(&philo[i].id, NULL, (void *)philo_routine, &philo[i]))
 			return (printf("ERROR!!!!"), 0);

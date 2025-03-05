@@ -23,8 +23,8 @@ int main(int ac, char **av)
 	if (!init_program(ac, av, &stats, &philos))
 		return (-1);
 	if (!exec(&stats, philos))
-		return (printf("ERROR!!!!"), free_program(&stats, philos), 0);
-	if (!free_program(&stats, philos))
+		return (printf("ERROR!!!!"), free_program(&stats), 0);
+	if (!free_program(&stats))
 		return (printf("ERROR!!!!"), 0);
 	return (0);
 }
