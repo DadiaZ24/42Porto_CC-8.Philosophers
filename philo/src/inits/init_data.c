@@ -6,7 +6,7 @@
 /*   By: ddias-fe <ddias-fe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 15:07:11 by ddias-fe          #+#    #+#             */
-/*   Updated: 2024/09/30 17:26:54 by ddias-fe         ###   ########.fr       */
+/*   Updated: 2025/03/06 17:39:59 by ddias-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void	init_philos(t_stats *stats, t_philo *philos)
 	{
 		philos[i].philo_id = i + 1;
 		philos[i].meals = 0;
+		philos[i].eating = false;
 		philos[i].last_meal = 0;
 		philos[i].left_fork = i;
 		philos[i].right_fork = (i + 1) % stats->philo_total;

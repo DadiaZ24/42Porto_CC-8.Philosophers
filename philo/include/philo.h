@@ -6,7 +6,7 @@
 /*   By: ddias-fe <ddias-fe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 14:11:51 by ddias-fe          #+#    #+#             */
-/*   Updated: 2024/09/30 17:26:49 by ddias-fe         ###   ########.fr       */
+/*   Updated: 2025/03/06 17:39:46 by ddias-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ typedef struct s_philo
 	int			meals;
 	int			right_fork;
 	int			left_fork;
+	bool		eating;
 	pthread_t	id;
 	suseconds_t	last_meal;
 	t_stats		*stats;
@@ -82,7 +83,7 @@ int			init_forks(t_stats *stats);
 int			init_stats(int ac, char **av, t_stats *stats);
 void		init_philos(t_stats *stats, t_philo *philos);
 int			init_program(int ac, char **av, t_stats *stats, t_philo **philos);
-void		action(t_stats *stats, t_philo *philo, char *msg);
+bool		action(t_stats *stats, t_philo *philo, char *msg);
 int			exec(t_stats *stats, t_philo *philo);
 void		*philo_routine(t_philo *philo);
 void		routine(t_philo *philo, t_stats *stats);
@@ -91,5 +92,8 @@ int			free_program(t_stats *stats);
 int			ft_atoi(const char *str);
 bool		take_action(t_stats *stats, t_philo *philo);
 bool		check_dead(t_stats *stats, t_philo *philo);
+bool		us_checker(t_stats *stats, t_philo *philo, long tu, long tc);
+void		lock_forks(t_stats *stats, t_philo *philo);
+void		unlock_forks(t_stats *stats, t_philo *philo);
 
 #endif

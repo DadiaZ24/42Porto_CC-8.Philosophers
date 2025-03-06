@@ -6,7 +6,7 @@
 /*   By: ddias-fe <ddias-fe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 12:39:28 by ddias-fe          #+#    #+#             */
-/*   Updated: 2025/02/17 12:39:28 by ddias-fe         ###   ########.fr       */
+/*   Updated: 2025/03/06 17:48:34 by ddias-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,19 +48,25 @@ void	routine(t_philo *philo, t_stats *stats)
 		if (stats->stop)
 		{
 			pthread_mutex_unlock(&stats->action);
+			pthread_mutex_unlock(&stats->forks[philo->left_fork]);
 			break ;
 		}
 		pthread_mutex_unlock(&stats->action);
 		if (!take_action(stats, philo))
 			break ;
-		pthread_mutex_unlock(&stats->forks[philo->left_fork]);
-		pthread_mutex_unlock(&stats->forks[philo->right_fork]);
+		unlock_forks(stats, philo);
 		if (stats->meals_required >= 0)
 			philo->meals++;
 		philo->last_meal = current_time_ms();
-		action(stats, philo, "is sleeping");
-		usleep(stats->time_to_sleep * 1000);
-		action(stats, philo, "is thinking");
+		if(!action(stats, philo, "is sleeping"))
+			break ;
+		if (!us_checker(stats, philo, stats->time_to_sleep, 
+			stats->time_to_die - (philo->last_meal - stats->start_time)))
+			{
+				break ;
+			}
+		if (!action(stats, philo, "is thinking"))
+			break ;
 		if (stats->meals_required != -1
 			&& philo->meals >= stats->meals_required)
 			break ;
@@ -75,23 +81,10 @@ bool	take_action(t_stats *stats, t_philo *philo)
 		action(stats, philo, "died");
 		return (false);
 	}
-	if (philo->philo_id % 2 == 0)
-	{
-		pthread_mutex_lock(&stats->forks[philo->right_fork]);
-		pthread_mutex_lock(&stats->forks[philo->left_fork]);
-		action(stats, philo, "has taken a fork");
-		action(stats, philo, "has taken a fork");
-	}
-	else
-	{
-		pthread_mutex_lock(&stats->forks[philo->left_fork]);
-		pthread_mutex_lock(&stats->forks[philo->right_fork]);
-		action(stats, philo, "has taken a fork");
-		action(stats, philo, "has taken a fork");
-	}
+	lock_forks(stats, philo);
 	action(stats, philo, "is eating");
-	usleep(stats->time_to_eat * 1000);
-	if (!check_dead(stats, philo))
+	if (!us_checker(stats, philo, stats->time_to_eat, 
+		stats->time_to_die - (philo->last_meal - stats->start_time)))
 		return (false);
 	return (true);
 }
@@ -104,8 +97,7 @@ bool	check_dead(t_stats *stats, t_philo *philo)
 		pthread_mutex_lock(&stats->action);
 		stats->stop = true;
 		pthread_mutex_unlock(&stats->action);
-		pthread_mutex_unlock(&stats->forks[philo->left_fork]);
-		pthread_mutex_unlock(&stats->forks[philo->right_fork]);
+		unlock_forks(stats, philo);
 		return (false);
 	}
 	return (true);
