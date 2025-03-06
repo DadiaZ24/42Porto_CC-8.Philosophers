@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-int init_program(int ac, char **av, t_stats *stats, t_philo **philos)
+int	init_program(int ac, char **av, t_stats *stats, t_philo **philos)
 {
 	if (!init_stats(ac, av, stats))
 		return (printf("ERROR!!!!"), 0);
@@ -23,9 +23,9 @@ int init_program(int ac, char **av, t_stats *stats, t_philo **philos)
 	return (1);
 }
 
-void init_philos(t_stats *stats, t_philo *philos)
+void	init_philos(t_stats *stats, t_philo *philos)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	while (++i < stats->philo_total)
@@ -39,7 +39,7 @@ void init_philos(t_stats *stats, t_philo *philos)
 	stats->philos = philos;
 }
 
-int init_stats(int ac, char **av, t_stats *stats)
+int	init_stats(int ac, char **av, t_stats *stats)
 {
 	if (ac == 5)
 	{
@@ -66,9 +66,9 @@ int init_stats(int ac, char **av, t_stats *stats)
 	return (1);
 }
 
-int init_forks(t_stats *stats)
+int	init_forks(t_stats *stats)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	stats->forks = malloc(sizeof(pthread_mutex_t) * stats->philo_total);

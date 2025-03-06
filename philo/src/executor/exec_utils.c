@@ -1,25 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
+/*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ddias-fe <ddias-fe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/17 12:22:30 by ddias-fe          #+#    #+#             */
-/*   Updated: 2025/02/17 12:22:30 by ddias-fe         ###   ########.fr       */
+/*   Created: 2025/03/06 11:23:54 by ddias-fe          #+#    #+#             */
+/*   Updated: 2025/03/06 11:23:54 by ddias-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	parser(int ac)
+void	action(t_stats *stats, t_philo *philo, char *msg)
 {
-	if (ac != 5 && ac != 6)
+	pthread_mutex_lock(&stats->action);
+	if (stats->stop)
 	{
-		printf("Error: Wrong number of arguments\n");
-		printf("Usage: ./philo [number_of_philos] [time_to_die]");
-		printf(" [time_to_eat] [time_to_sleep] [number_of_meals (optional)]\n");
-		return (1);
+		pthread_mutex_unlock(&stats->action);
+		return ;
 	}
-	return (0);
+	printf("[%ld] %d %s\n", current_time_ms() - stats->start_time,
+		philo->philo_id, msg);
+	pthread_mutex_unlock(&stats->action);
 }

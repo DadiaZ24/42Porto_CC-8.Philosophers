@@ -11,32 +11,32 @@
 /* ************************************************************************** */
 
 #ifndef PHILO_H
-#define PHILO_H
+# define PHILO_H
 
 //________________________________________________________________
 //|_____________________________[LIBS]____________________________|
 //|_______________________________________________________________|
 
-#include <pthread.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/time.h>
-#include <stdbool.h>
-#include <semaphore.h>
-#include <fcntl.h>
-#include <signal.h>
-#include <sys/wait.h>
+# include <pthread.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <unistd.h>
+# include <sys/time.h>
+# include <stdbool.h>
+# include <semaphore.h>
+# include <fcntl.h>
+# include <signal.h>
+# include <sys/wait.h>
 
 //________________________________________________________________
 //|____________________________[MACROS]___________________________|
 //|_______________________________________________________________|
 
 //----COLORS
-#define BLACK "\033[0;30m"
-#define RED "\033[0;31m"
-#define BLUE "\033[0;36m"
-#define DEFAULT_COLOR "\033[0m"
+# define BLACK "\033[0;30m"
+# define RED "\033[0;31m"
+# define BLUE "\033[0;36m"
+# define DEFAULT_COLOR "\033[0m"
 
 //-----MESSAGES
 
@@ -44,49 +44,52 @@
 //|__________________________[STRUCTURES]_________________________|
 //|_______________________________________________________________|
 
-typedef struct s_stats t_stats;
+typedef struct s_stats	t_stats;
 
 typedef struct s_philo
 {
-	int philo_id;
-	int meals;
-	long last_meal;
-	pthread_t id;
-	int left_fork;
-	int right_fork;
-	t_stats *stats;
+	int			philo_id;
+	int			meals;
+	int			right_fork;
+	int			left_fork;
+	pthread_t	id;
+	suseconds_t	last_meal;
+	t_stats		*stats;
 
-} t_philo;
+}	t_philo;
 
 typedef struct s_stats
 {
-	int philo_total;
-	long time_to_die;
-	long time_to_eat;
-	long time_to_sleep;
-	int meals_required;
-	bool stop;
-	pthread_mutex_t *forks;
-	pthread_mutex_t action;
-	long start_time;
-	t_philo *philos;
+	int				philo_total;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				meals_required;
+	bool			stop;
+	suseconds_t		start_time;
+	pthread_mutex_t	*forks;
+	pthread_mutex_t	action;
+	t_philo			*philos;
 
-} t_stats;
+}	t_stats;
 
 //________________________________________________________________
 //|__________________________[FUNCTIONS]__________________________|
 //|_______________________________________________________________|
 
-int parser(int ac, char **av);
-int init_forks(t_stats *stats);
-int init_stats(int ac, char **av, t_stats *stats);
-void init_philos(t_stats *stats, t_philo *philos);
-int init_program(int ac, char **av, t_stats *stats, t_philo **philos);
-void action(t_stats *stats, t_philo *philo, char *msg);
-int exec(t_stats *stats, t_philo *philo);
-void *philo_routine(t_philo *philo);
-void routine(t_philo *philo, t_stats *stats);
-suseconds_t current_time_ms(void);
-int free_program(t_stats *stats);
-int ft_atoi(const char *str);
+int			parser(int ac);
+int			init_forks(t_stats *stats);
+int			init_stats(int ac, char **av, t_stats *stats);
+void		init_philos(t_stats *stats, t_philo *philos);
+int			init_program(int ac, char **av, t_stats *stats, t_philo **philos);
+void		action(t_stats *stats, t_philo *philo, char *msg);
+int			exec(t_stats *stats, t_philo *philo);
+void		*philo_routine(t_philo *philo);
+void		routine(t_philo *philo, t_stats *stats);
+suseconds_t	current_time_ms(void);
+int			free_program(t_stats *stats);
+int			ft_atoi(const char *str);
+bool		take_action(t_stats *stats, t_philo *philo);
+bool		check_dead(t_stats *stats, t_philo *philo);
+
 #endif

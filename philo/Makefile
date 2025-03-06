@@ -35,7 +35,9 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/parser/parser.c \
 		$(SRC_DIR)/utils/utils.c \
 		$(SRC_DIR)/executor/exec.c \
+		$(SRC_DIR)/executor/exec_utils.c \
 		$(SRC_DIR)/free/free_program.c
+
 
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
@@ -67,8 +69,12 @@ clean:
 
 fclean: clean
 	@$(RM) $(NAME)
-	@$(RMDIR) $(OBJ_DIR)/inits $(OBJ_DIR)/parser $(OBJ_DIR)/utils $(OBJ_DIR)/executor $(OBJ_DIR)/free
-	@$(RMDIR) $(OBJ_DIR)
+	@if [ -d $(OBJ_DIR)/inits ]; then $(RMDIR) $(OBJ_DIR)/inits; fi
+	@if [ -d $(OBJ_DIR)/parser ]; then $(RMDIR) $(OBJ_DIR)/parser; fi
+	@if [ -d $(OBJ_DIR)/utils ]; then $(RMDIR) $(OBJ_DIR)/utils; fi
+	@if [ -d $(OBJ_DIR)/executor ]; then $(RMDIR) $(OBJ_DIR)/executor; fi
+	@if [ -d $(OBJ_DIR)/free ]; then $(RMDIR) $(OBJ_DIR)/free; fi
+	@if [ -d $(OBJ_DIR) ]; then $(RMDIR) $(OBJ_DIR); fi
 
 gdb:
 	gdb -tui ./philo

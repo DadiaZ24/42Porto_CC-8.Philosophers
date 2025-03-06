@@ -12,19 +12,35 @@
 
 #include "philo.h"
 
-void action(t_stats *stats, t_philo *philo, char *msg)
+int	exec(t_stats *stats, t_philo *philo)
 {
-	pthread_mutex_lock(&stats->action);
-	if (stats->stop)
+	int	i;
+
+	i = -1;
+	stats->start_time = current_time_ms();
+	while (++i < stats->philo_total)
 	{
-		pthread_mutex_unlock(&stats->action);
-		return;
+		philo[i].last_meal = stats->start_time;
+		philo[i].stats = stats;
+		if (pthread_create(&philo[i].id, NULL,
+				(void *)philo_routine, &philo[i]))
+			return (printf("ERROR!!!!"), 0);
 	}
-	printf("[%ld] Philo %d %s\n", current_time_ms() - stats->start_time, philo->philo_id, msg);
-	pthread_mutex_unlock(&stats->action);
+	i = -1;
+	while (++i < stats->philo_total)
+	{
+		pthread_join(philo[i].id, NULL);
+	}
+	return (1);
 }
 
-void routine(t_philo *philo, t_stats *stats)
+void	*philo_routine(t_philo *philo)
+{
+	routine(philo, philo->stats);
+	return (NULL);
+}
+
+void	routine(t_philo *philo, t_stats *stats)
 {
 	while (1)
 	{
@@ -32,38 +48,11 @@ void routine(t_philo *philo, t_stats *stats)
 		if (stats->stop)
 		{
 			pthread_mutex_unlock(&stats->action);
-			break;
+			break ;
 		}
 		pthread_mutex_unlock(&stats->action);
-		if (stats->philo_total <= 1)
-		{
-			action(stats, philo, "has died");
-			break;
-		}
-		if (philo->philo_id % 2 == 0)
-		{
-			pthread_mutex_lock(&stats->forks[philo->right_fork]);
-			pthread_mutex_lock(&stats->forks[philo->left_fork]);
-			action(stats, philo, "has taken a fork");
-			action(stats, philo, "has taken a fork");
-		}
-		else
-		{
-			pthread_mutex_lock(&stats->forks[philo->left_fork]);
-			pthread_mutex_lock(&stats->forks[philo->right_fork]);
-			action(stats, philo, "has taken a fork");
-			action(stats, philo, "has taken a fork");
-		}
-		if ((current_time_ms() - philo->last_meal) > stats->time_to_die)
-		{
-			action(stats, philo, "has died");
-			pthread_mutex_lock(&stats->action);
-			stats->stop = true;
-			pthread_mutex_unlock(&stats->action);
-			pthread_mutex_unlock(&stats->forks[philo->left_fork]);
-			pthread_mutex_unlock(&stats->forks[philo->right_fork]);
-			break;
-		}
+		if (!take_action(stats, philo))
+			break ;
 		action(stats, philo, "is eating");
 		usleep(stats->time_to_eat * 1000);
 		pthread_mutex_unlock(&stats->forks[philo->left_fork]);
@@ -74,34 +63,49 @@ void routine(t_philo *philo, t_stats *stats)
 		action(stats, philo, "is sleeping");
 		usleep(stats->time_to_sleep * 1000);
 		action(stats, philo, "is thinking");
-		if (stats->meals_required != -1 && philo->meals >= stats->meals_required)
-			break;
+		if (stats->meals_required != -1
+			&& philo->meals >= stats->meals_required)
+			break ;
 	}
 }
 
-void *philo_routine(t_philo *philo)
+bool	take_action(t_stats *stats, t_philo *philo)
 {
-	routine(philo, philo->stats);
-	return (NULL);
+	if (stats->philo_total <= 1)
+	{
+		action(stats, philo, "died");
+		return (false);
+	}
+	if (philo->philo_id % 2 == 0)
+	{
+		pthread_mutex_lock(&stats->forks[philo->right_fork]);
+		pthread_mutex_lock(&stats->forks[philo->left_fork]);
+		action(stats, philo, "has taken a fork");
+		action(stats, philo, "has taken a fork");
+	}
+	else
+	{
+		pthread_mutex_lock(&stats->forks[philo->left_fork]);
+		pthread_mutex_lock(&stats->forks[philo->right_fork]);
+		action(stats, philo, "has taken a fork");
+		action(stats, philo, "has taken a fork");
+	}
+	if (!check_dead(stats, philo))
+		return (false);
+	return (true);
 }
 
-int exec(t_stats *stats, t_philo *philo)
+bool	check_dead(t_stats *stats, t_philo *philo)
 {
-	int i;
-
-	i = -1;
-	stats->start_time = current_time_ms();
-	while (++i < stats->philo_total)
+	if ((current_time_ms() - philo->last_meal) > stats->time_to_die)
 	{
-		philo[i].last_meal = stats->start_time;
-		philo[i].stats = stats;
-		if (pthread_create(&philo[i].id, NULL, (void *)philo_routine, &philo[i]))
-			return (printf("ERROR!!!!"), 0);
+		action(stats, philo, "has died");
+		pthread_mutex_lock(&stats->action);
+		stats->stop = true;
+		pthread_mutex_unlock(&stats->action);
+		pthread_mutex_unlock(&stats->forks[philo->left_fork]);
+		pthread_mutex_unlock(&stats->forks[philo->right_fork]);
+		return (false);
 	}
-	i = -1;
-	while (++i < stats->philo_total)
-	{
-		pthread_join(philo[i].id, NULL);
-	}
-	return (1);
+	return (true);
 }
