@@ -53,8 +53,6 @@ void	routine(t_philo *philo, t_stats *stats)
 		pthread_mutex_unlock(&stats->action);
 		if (!take_action(stats, philo))
 			break ;
-		action(stats, philo, "is eating");
-		usleep(stats->time_to_eat * 1000);
 		pthread_mutex_unlock(&stats->forks[philo->left_fork]);
 		pthread_mutex_unlock(&stats->forks[philo->right_fork]);
 		if (stats->meals_required >= 0)
@@ -73,6 +71,7 @@ bool	take_action(t_stats *stats, t_philo *philo)
 {
 	if (stats->philo_total <= 1)
 	{
+		usleep(stats->time_to_die * 1000);
 		action(stats, philo, "died");
 		return (false);
 	}
@@ -90,6 +89,8 @@ bool	take_action(t_stats *stats, t_philo *philo)
 		action(stats, philo, "has taken a fork");
 		action(stats, philo, "has taken a fork");
 	}
+	action(stats, philo, "is eating");
+	usleep(stats->time_to_eat * 1000);
 	if (!check_dead(stats, philo))
 		return (false);
 	return (true);

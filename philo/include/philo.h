@@ -77,7 +77,7 @@ typedef struct s_stats
 //|__________________________[FUNCTIONS]__________________________|
 //|_______________________________________________________________|
 
-int			parser(int ac);
+int			parser(int ac, char **av);
 int			init_forks(t_stats *stats);
 int			init_stats(int ac, char **av, t_stats *stats);
 void		init_philos(t_stats *stats, t_philo *philos);

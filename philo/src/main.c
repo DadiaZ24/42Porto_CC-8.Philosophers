@@ -18,7 +18,7 @@ int	main(int ac, char **av)
 	t_stats	stats;
 
 	philos = NULL;
-	if (parser(ac))
+	if (parser(ac, av))
 		return (-1);
 	if (!init_program(ac, av, &stats, &philos))
 		return (-1);
