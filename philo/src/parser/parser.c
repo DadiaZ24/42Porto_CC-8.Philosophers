@@ -6,7 +6,7 @@
 /*   By: ddias-fe <ddias-fe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 12:22:30 by ddias-fe          #+#    #+#             */
-/*   Updated: 2025/02/17 12:22:30 by ddias-fe         ###   ########.fr       */
+/*   Updated: 2025/03/11 17:13:07 by ddias-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,8 @@ static int	ft_isdigit(int c)
 
 int	parser(int ac, char **av)
 {
-	int i;
-	int j;
+	int	i;
+	int	j;
 
 	i = 0;
 	if (ac != 5 && ac != 6)

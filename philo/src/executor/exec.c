@@ -6,7 +6,7 @@
 /*   By: ddias-fe <ddias-fe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 12:39:28 by ddias-fe          #+#    #+#             */
-/*   Updated: 2025/03/06 17:48:34 by ddias-fe         ###   ########.fr       */
+/*   Updated: 2025/03/11 18:38:16 by ddias-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,36 +44,70 @@ void	routine(t_philo *philo, t_stats *stats)
 {
 	while (1)
 	{
-		pthread_mutex_lock(&stats->action);
-		if (stats->stop)
+		if (!routine_check(stats, philo))
 		{
-			pthread_mutex_unlock(&stats->action);
-			pthread_mutex_unlock(&stats->forks[philo->left_fork]);
+			printf("%d SALTOU FORA\n", philo->philo_id);
 			break ;
 		}
-		pthread_mutex_unlock(&stats->action);
-		if (!take_action(stats, philo))
+		if (!eat(stats, philo))
+		{
+			printf("%d SALTOU FORA\n", philo->philo_id);
 			break ;
-		unlock_forks(stats, philo);
+		}
 		if (stats->meals_required >= 0)
 			philo->meals++;
-		philo->last_meal = current_time_ms();
-		if(!action(stats, philo, "is sleeping"))
+		if (!action(stats, philo, "is sleeping"))
+		{
+			printf("%d SALTOU FORA\n", philo->philo_id);
 			break ;
-		if (!us_checker(stats, philo, stats->time_to_sleep, 
-			stats->time_to_die - (philo->last_meal - stats->start_time)))
-			{
-				break ;
-			}
+		}
+		if (!us_checker(stats, philo, stats->time_to_sleep,
+				stats->time_to_die - (current_time_ms() - philo->last_meal)))
+		{
+			printf("%d SALTOU FORA\n", philo->philo_id);
+			break ;
+		}
+		usleep(stats->time_to_sleep * 1000);
 		if (!action(stats, philo, "is thinking"))
+		{
+			printf("%d SALTOU FORA\n", philo->philo_id);
 			break ;
+		}
 		if (stats->meals_required != -1
 			&& philo->meals >= stats->meals_required)
-			break ;
+			{
+				printf("%d SALTOU FORA\n", philo->philo_id);
+				break ;
+			}
 	}
 }
 
-bool	take_action(t_stats *stats, t_philo *philo)
+bool	eat(t_stats *stats, t_philo *philo)
+{
+	if (!eat_checks(stats, philo))
+		return (false);
+	if (stats->time_to_die < stats->time_to_eat)
+	{
+		usleep(stats->time_to_die * 1000);
+		action(stats, philo, "has died");
+		pthread_mutex_lock(&stats->action);
+		stats->stop = true;
+		pthread_mutex_unlock(&stats->action);
+		return (false);
+	}
+	lock_forks(stats, philo);
+	philo->last_meal = current_time_ms();
+	if (!action(stats, philo, "is eating"))
+		return (unlock_forks(stats, philo), false);
+	if (!us_checker(stats, philo, stats->time_to_eat,
+			stats->time_to_die - (current_time_ms() - philo->last_meal)))
+		return (unlock_forks(stats, philo), false);
+	usleep(stats->time_to_eat * 1000);
+	unlock_forks(stats, philo);
+	return (true);
+}
+
+bool	eat_checks(t_stats *stats, t_philo *philo)
 {
 	if (stats->philo_total <= 1)
 	{
@@ -81,24 +115,12 @@ bool	take_action(t_stats *stats, t_philo *philo)
 		action(stats, philo, "died");
 		return (false);
 	}
-	lock_forks(stats, philo);
-	action(stats, philo, "is eating");
-	if (!us_checker(stats, philo, stats->time_to_eat, 
-		stats->time_to_die - (philo->last_meal - stats->start_time)))
-		return (false);
-	return (true);
-}
-
-bool	check_dead(t_stats *stats, t_philo *philo)
-{
-	if ((current_time_ms() - philo->last_meal) > stats->time_to_die)
+	pthread_mutex_lock(&stats->action);
+	if (stats->stop)
 	{
-		action(stats, philo, "has died");
-		pthread_mutex_lock(&stats->action);
-		stats->stop = true;
 		pthread_mutex_unlock(&stats->action);
-		unlock_forks(stats, philo);
 		return (false);
 	}
+	pthread_mutex_unlock(&stats->action);
 	return (true);
 }

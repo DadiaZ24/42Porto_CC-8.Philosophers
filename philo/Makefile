@@ -6,7 +6,7 @@
 #    By: ddias-fe <ddias-fe@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/23 21:05:41 by ddias-fe          #+#    #+#              #
-#    Updated: 2024/09/30 17:28:19 by ddias-fe         ###   ########.fr        #
+#    Updated: 2025/03/11 17:19:00 by ddias-fe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ OBJ_DIR = ./obj
 #COMPILE/RULE TOOLS
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g -I./include
-SANITIZE = -fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer
+SANITIZE = -L. -lpthread -g3 -fsanitize=thread -O3 -march=native
 RM = rm -f
 RMDIR = rmdir
 
@@ -59,7 +59,7 @@ deps:
 	@echo "Created object directories."
 
 $(NAME): $(OBJ) $(DEPS)
-	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+	$(CC) $(CFLAGS) $(SANITIZE) $(OBJ) -o $(NAME)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@

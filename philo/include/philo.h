@@ -6,7 +6,7 @@
 /*   By: ddias-fe <ddias-fe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 14:11:51 by ddias-fe          #+#    #+#             */
-/*   Updated: 2025/03/06 17:39:46 by ddias-fe         ###   ########.fr       */
+/*   Updated: 2025/03/11 17:10:35 by ddias-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,10 +90,11 @@ void		routine(t_philo *philo, t_stats *stats);
 suseconds_t	current_time_ms(void);
 int			free_program(t_stats *stats);
 int			ft_atoi(const char *str);
-bool		take_action(t_stats *stats, t_philo *philo);
-bool		check_dead(t_stats *stats, t_philo *philo);
+bool		eat(t_stats *stats, t_philo *philo);
 bool		us_checker(t_stats *stats, t_philo *philo, long tu, long tc);
 void		lock_forks(t_stats *stats, t_philo *philo);
 void		unlock_forks(t_stats *stats, t_philo *philo);
+bool		routine_check(t_stats *stats, t_philo *philo);
+bool		eat_checks(t_stats *stats, t_philo *philo);
 
 #endif
