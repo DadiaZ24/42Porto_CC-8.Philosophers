@@ -6,7 +6,7 @@
 #    By: ddias-fe <ddias-fe@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/23 21:05:41 by ddias-fe          #+#    #+#              #
-#    Updated: 2025/03/11 17:19:00 by ddias-fe         ###   ########.fr        #
+#    Updated: 2025/03/20 15:54:33 by ddias-fe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,6 +35,7 @@ SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/parser/parser.c \
 		$(SRC_DIR)/utils/utils.c \
 		$(SRC_DIR)/executor/exec.c \
+		$(SRC_DIR)/executor/actions.c \
 		$(SRC_DIR)/executor/exec_utils.c \
 		$(SRC_DIR)/free/free_program.c
 
@@ -50,16 +51,15 @@ all: deps $(NAME)
 deps:
 
 #	CREATE OBJECTS FOLDER
-	@mkdir -p $(OBJ_DIR)
-	@mkdir -p $(OBJ_DIR)/inits
-	@mkdir -p $(OBJ_DIR)/parser
-	@mkdir -p $(OBJ_DIR)/utils
-	@mkdir -p $(OBJ_DIR)/executor
-	@mkdir -p $(OBJ_DIR)/free
-	@echo "Created object directories."
+	@if [ ! -d $(OBJ_DIR) ]; then mkdir -p $(OBJ_DIR); fi
+	@if [ ! -d $(OBJ_DIR)/inits ]; then mkdir -p $(OBJ_DIR)/inits; fi
+	@if [ ! -d $(OBJ_DIR)/parser ]; then mkdir -p $(OBJ_DIR)/parser; fi
+	@if [ ! -d $(OBJ_DIR)/utils ]; then mkdir -p $(OBJ_DIR)/utils; fi
+	@if [ ! -d $(OBJ_DIR)/executor ]; then mkdir -p $(OBJ_DIR)/executor; fi
+	@if [ ! -d $(OBJ_DIR)/free ]; then mkdir -p $(OBJ_DIR)/free; fi
 
 $(NAME): $(OBJ) $(DEPS)
-	$(CC) $(CFLAGS) $(SANITIZE) $(OBJ) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@

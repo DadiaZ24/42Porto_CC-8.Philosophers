@@ -6,7 +6,7 @@
 /*   By: ddias-fe <ddias-fe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 12:43:06 by ddias-fe          #+#    #+#             */
-/*   Updated: 2025/02/17 12:43:06 by ddias-fe         ###   ########.fr       */
+/*   Updated: 2025/03/20 14:58:08 by ddias-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,4 +41,18 @@ int	ft_atoi(const char *str)
 		i++;
 	}
 	return (result * sign);
+}
+
+bool	usleep_checking(suseconds_t time, t_stats *stats)
+{
+	while ((time) > 0)
+	{
+		pthread_mutex_lock(&stats->action);
+		if (stats->stop)
+			return (pthread_mutex_unlock(&stats->action), false);
+		pthread_mutex_unlock(&stats->action);
+		time -= 10000;
+		usleep(10000);
+	}
+	return (true);
 }

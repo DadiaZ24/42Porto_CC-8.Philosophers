@@ -6,7 +6,7 @@
 /*   By: ddias-fe <ddias-fe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 14:11:51 by ddias-fe          #+#    #+#             */
-/*   Updated: 2025/03/11 17:10:35 by ddias-fe         ###   ########.fr       */
+/*   Updated: 2025/03/27 11:35:08 by ddias-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ typedef struct s_philo
 	int			meals;
 	int			right_fork;
 	int			left_fork;
-	bool		eating;
+	bool		is_full;
 	pthread_t	id;
 	suseconds_t	last_meal;
 	t_stats		*stats;
@@ -66,10 +66,13 @@ typedef struct s_stats
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				meals_required;
+	int				philos_feeded;
+	int				time_to_think;
 	bool			stop;
 	suseconds_t		start_time;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	action;
+	pthread_mutex_t	lock;
 	t_philo			*philos;
 
 }	t_stats;
@@ -78,23 +81,24 @@ typedef struct s_stats
 //|__________________________[FUNCTIONS]__________________________|
 //|_______________________________________________________________|
 
+int			init_program(int ac, char **av, t_stats *stats, t_philo **philos);
 int			parser(int ac, char **av);
+int			exec(t_stats *stats, t_philo *philo);
 int			init_forks(t_stats *stats);
 int			init_stats(int ac, char **av, t_stats *stats);
-void		init_philos(t_stats *stats, t_philo *philos);
-int			init_program(int ac, char **av, t_stats *stats, t_philo **philos);
-bool		action(t_stats *stats, t_philo *philo, char *msg);
-int			exec(t_stats *stats, t_philo *philo);
-void		*philo_routine(t_philo *philo);
-void		routine(t_philo *philo, t_stats *stats);
-suseconds_t	current_time_ms(void);
 int			free_program(t_stats *stats);
 int			ft_atoi(const char *str);
-bool		eat(t_stats *stats, t_philo *philo);
-bool		us_checker(t_stats *stats, t_philo *philo, long tu, long tc);
-void		lock_forks(t_stats *stats, t_philo *philo);
+void		init_philos(t_stats *stats, t_philo *philos);
+void		*routine(t_philo *philo);
+bool		sleeping(t_philo *philo);
 void		unlock_forks(t_stats *stats, t_philo *philo);
-bool		routine_check(t_stats *stats, t_philo *philo);
-bool		eat_checks(t_stats *stats, t_philo *philo);
+void		thinking(t_philo *philo);
+void		lock_forks(t_stats *stats, t_philo *philo);
+void		main_checker(t_philo *philo, t_stats *stats);
+bool		eating(t_philo *philo);
+bool		action(t_stats *stats, t_philo *philo, char *msg);
+bool		check_dead(t_philo *philo, t_stats *stats);
+suseconds_t	current_time_ms(void);
+bool		usleep_checking(suseconds_t time, t_stats *stats);
 
 #endif

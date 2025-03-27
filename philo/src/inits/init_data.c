@@ -6,7 +6,7 @@
 /*   By: ddias-fe <ddias-fe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 15:07:11 by ddias-fe          #+#    #+#             */
-/*   Updated: 2025/03/11 09:22:53 by ddias-fe         ###   ########.fr       */
+/*   Updated: 2025/03/27 11:41:41 by ddias-fe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@
 int	init_program(int ac, char **av, t_stats *stats, t_philo **philos)
 {
 	if (!init_stats(ac, av, stats))
-		return (printf("ERROR!!!!"), 0);
+		return (printf("ERROR Init stats!"), 0);
 	*philos = malloc(sizeof(t_philo) * stats->philo_total);
 	if (!*philos)
-		return (printf("ERROR!!!!"), 0);
+		return (printf("ERROR Init philos"), 0);
 	init_philos(stats, *philos);
 	return (1);
 }
@@ -32,7 +32,7 @@ void	init_philos(t_stats *stats, t_philo *philos)
 	{
 		philos[i].philo_id = i + 1;
 		philos[i].meals = 0;
-		philos[i].eating = false;
+		philos[i].is_full = false;
 		philos[i].last_meal = current_time_ms();
 		philos[i].left_fork = i;
 		philos[i].right_fork = (i + 1) % stats->philo_total;
@@ -58,6 +58,7 @@ int	init_stats(int ac, char **av, t_stats *stats)
 		stats->time_to_sleep = ft_atoi(av[4]);
 		stats->meals_required = ft_atoi(av[5]);
 	}
+	stats->philos_feeded = 0;
 	stats->start_time = current_time_ms();
 	stats->stop = false;
 	if (pthread_mutex_init(&stats->action, NULL))
